@@ -24,8 +24,8 @@ int main() {
                 Process temp = p[j];
                 p[j] = p[j+1];
                 p[j+1] = temp;
-            }
-        }
+    }
+    }
     }
     
     int current_time = 0;
@@ -44,12 +44,16 @@ int main() {
     }
     
     printf("Waiting Time: ");
-    for(int i = 0; i < n; i++) printf("%s %d ", p[i].pid, p[i].waiting);
+    for(int i = 0; i < n; i++) {
+        printf("%s %d%s", p[i].pid, p[i].waiting, (i == n - 1) ? "" : " ");
+    }
     
-    printf("Turnaround Time: ");
-    for(int i = 0; i < n; i++) printf("%s %d ", p[i].pid, p[i].turnaround);
+    printf(" Turnaround Time: ");
+    for(int i = 0; i < n; i++) {
+        printf("%s %d%s", p[i].pid, p[i].turnaround, (i == n - 1) ? "" : " ");
+    }
     
-    printf("Average Waiting Time: %.2f Average Turnaround Time: %.2f\n", total_wt / n, total_tat / n);
+    printf(" Average Waiting Time: %.2f Average Turnaround Time: %.2f\n", total_wt / n, total_tat / n);
     
     return 0;
 }
