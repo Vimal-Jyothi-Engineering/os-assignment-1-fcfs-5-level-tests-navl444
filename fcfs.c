@@ -24,8 +24,8 @@ int main() {
                 Process temp = p[j];
                 p[j] = p[j+1];
                 p[j+1] = temp;
-    }
-    }
+            }
+        }
     }
     
     int current_time = 0;
