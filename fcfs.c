@@ -52,7 +52,6 @@ int main() {
         printf("%s %d\n", p[i].pid, p[i].turnaround);
     }
 
-    
     printf("Average Waiting Time: %.2f\n", total_wt / (float)n);
     printf("Average Turnaround Time: %.2f\n", total_tat / (float)n);
 
