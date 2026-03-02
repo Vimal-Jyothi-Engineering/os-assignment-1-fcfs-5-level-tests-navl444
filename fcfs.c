@@ -7,6 +7,7 @@ typedef struct {
     int burst;
     int waiting;
     int turnaround;
+    int original_index;
 } Process;
 
 int main() {
@@ -15,12 +16,14 @@ int main() {
     Process p[100];
     for (int i = 0; i < n; i++) {
         scanf("%s %d %d", p[i].pid, &p[i].arrival, &p[i].burst);
+        p[i].original_index = i;
     }
 
-    // Sort by Arrival Time, then by PID for the tie-breaker
+    // Sort by Arrival Time, then by PID as tie-breaker
     for(int i = 0; i < n - 1; i++) {
         for(int j = 0; j < n - i - 1; j++) {
-            if(p[j].arrival > p[j+1].arrival || (p[j].arrival == p[j+1].arrival && strcmp(p[j].pid, p[j+1].pid) > 0)) {
+            if(p[j].arrival > p[j+1].arrival || 
+               (p[j].arrival == p[j+1].arrival && strcmp(p[j].pid, p[j+1].pid) > 0)) {
                 Process temp = p[j];
                 p[j] = p[j+1];
                 p[j+1] = temp;
@@ -41,7 +44,17 @@ int main() {
         current_time += p[i].burst;
     }
 
-    // STRICT formatting: No extra newlines between sections
+    // Sort back to original input order for output
+    for(int i = 0; i < n - 1; i++) {
+        for(int j = 0; j < n - i - 1; j++) {
+            if(p[j].original_index > p[j+1].original_index) {
+                Process temp = p[j];
+                p[j] = p[j+1];
+                p[j+1] = temp;
+            }
+        }
+    }
+
     printf("Waiting Time:\n");
     for(int i = 0; i < n; i++) {
         printf("%s %d\n", p[i].pid, p[i].waiting);
@@ -52,6 +65,5 @@ int main() {
     }
     printf("Average Waiting Time: %.2f\n", total_wt / (float)n);
     printf("Average Turnaround Time: %.2f\n", total_tat / (float)n);
-
     return 0;
 }
