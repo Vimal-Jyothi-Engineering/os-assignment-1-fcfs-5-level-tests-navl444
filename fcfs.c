@@ -17,7 +17,7 @@ int main() {
         scanf("%s %d %d", p[i].pid, &p[i].arrival, &p[i].burst);
     }
 
-    
+    // Sort by Arrival Time, then by PID for the tie-breaker
     for(int i = 0; i < n - 1; i++) {
         for(int j = 0; j < n - i - 1; j++) {
             if(p[j].arrival > p[j+1].arrival || (p[j].arrival == p[j+1].arrival && strcmp(p[j].pid, p[j+1].pid) > 0)) {
@@ -41,17 +41,15 @@ int main() {
         current_time += p[i].burst;
     }
 
-    
+    // STRICT formatting: No extra newlines between sections
     printf("Waiting Time:\n");
     for(int i = 0; i < n; i++) {
         printf("%s %d\n", p[i].pid, p[i].waiting);
     }
-
     printf("Turnaround Time:\n");
     for(int i = 0; i < n; i++) {
         printf("%s %d\n", p[i].pid, p[i].turnaround);
     }
-
     printf("Average Waiting Time: %.2f\n", total_wt / (float)n);
     printf("Average Turnaround Time: %.2f\n", total_tat / (float)n);
 
