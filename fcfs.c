@@ -43,18 +43,18 @@ int main() {
         current_time = ct;
     }
     
-    // Printing exactly as per common autograder requirements
+    // Printing EVERYTHING on one single line to match the document requirement
     printf("Waiting Time: ");
     for(int i = 0; i < n; i++) {
-        printf("%s %d%s", p[i].pid, p[i].waiting, (i == n - 1) ? "" : " ");
+        printf("%s %d ", p[i].pid, p[i].waiting);
     }
     
-    printf("\nTurnaround Time: ");
+    printf("Turnaround Time: ");
     for(int i = 0; i < n; i++) {
-        printf("%s %d%s", p[i].pid, p[i].turnaround, (i == n - 1) ? "" : " ");
+        printf("%s %d ", p[i].pid, p[i].turnaround);
     }
     
-    printf("\nAverage Waiting Time: %.2f Average Turnaround Time: %.2f\n", total_wt / (float)n, total_tat / (float)n);
+    printf("Average Waiting Time: %.2f Average Turnaround Time: %.2f\n", total_wt / (float)n, total_tat / (float)n);
     
     return 0;
 }
