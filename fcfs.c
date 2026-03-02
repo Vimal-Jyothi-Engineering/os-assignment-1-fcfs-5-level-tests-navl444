@@ -19,11 +19,12 @@ int main() {
         p[i].original_index = i;
     }
 
-    // Sort by Arrival Time, then by PID as tie-breaker
+    // FCFS Sorting Logic
     for(int i = 0; i < n - 1; i++) {
         for(int j = 0; j < n - i - 1; j++) {
-            if(p[j].arrival > p[j+1].arrival || 
-               (p[j].arrival == p[j+1].arrival && strcmp(p[j].pid, p[j+1].pid) > 0)) {
+            // Priority 1: Arrival Time
+            // Priority 2: Original Input Order (The Tie-Breaker)
+            if(p[j].arrival > p[j+1].arrival || (p[j].arrival == p[j+1].arrival && p[j].original_index > p[j+1].original_index)) {
                 Process temp = p[j];
                 p[j] = p[j+1];
                 p[j+1] = temp;
@@ -34,9 +35,7 @@ int main() {
     int current_time = 0;
     float total_wt = 0, total_tat = 0;
     for(int i = 0; i < n; i++) {
-        if(current_time < p[i].arrival) {
-            current_time = p[i].arrival;
-        }
+        if(current_time < p[i].arrival) current_time = p[i].arrival;
         p[i].waiting = current_time - p[i].arrival;
         p[i].turnaround = p[i].waiting + p[i].burst;
         total_wt += p[i].waiting;
@@ -44,7 +43,7 @@ int main() {
         current_time += p[i].burst;
     }
 
-    // Sort back to original input order for output
+    // Sort back to original input order for printing
     for(int i = 0; i < n - 1; i++) {
         for(int j = 0; j < n - i - 1; j++) {
             if(p[j].original_index > p[j+1].original_index) {
@@ -56,14 +55,11 @@ int main() {
     }
 
     printf("Waiting Time:\n");
-    for(int i = 0; i < n; i++) {
-        printf("%s %d\n", p[i].pid, p[i].waiting);
-    }
+    for(int i = 0; i < n; i++) printf("%s %d\n", p[i].pid, p[i].waiting);
     printf("Turnaround Time:\n");
-    for(int i = 0; i < n; i++) {
-        printf("%s %d\n", p[i].pid, p[i].turnaround);
-    }
+    for(int i = 0; i < n; i++) printf("%s %d\n", p[i].pid, p[i].turnaround);
     printf("Average Waiting Time: %.2f\n", total_wt / (float)n);
     printf("Average Turnaround Time: %.2f\n", total_tat / (float)n);
+
     return 0;
 }
