@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <string.h>
+#include <stdlib.h>
 
 typedef struct {
     char pid[10];
@@ -19,12 +20,13 @@ int main() {
         p[i].original_index = i;
     }
 
-    // FCFS Sorting Logic
     for(int i = 0; i < n - 1; i++) {
         for(int j = 0; j < n - i - 1; j++) {
-            // Priority 1: Arrival Time
-            // Priority 2: Original Input Order (The Tie-Breaker)
-            if(p[j].arrival > p[j+1].arrival || (p[j].arrival == p[j+1].arrival && p[j].original_index > p[j+1].original_index)) {
+            // Extract numbers: "P1" becomes 1, "P10" becomes 10
+            int id1 = atoi(&p[j].pid[1]);
+            int id2 = atoi(&p[j+1].pid[1]);
+
+            if(p[j].arrival > p[j+1].arrival || (p[j].arrival == p[j+1].arrival && id1 > id2)) {
                 Process temp = p[j];
                 p[j] = p[j+1];
                 p[j+1] = temp;
@@ -32,18 +34,17 @@ int main() {
         }
     }
 
-    int current_time = 0;
-    float total_wt = 0, total_tat = 0;
+    int cur = 0;
+    float tw = 0, tt = 0;
     for(int i = 0; i < n; i++) {
-        if(current_time < p[i].arrival) current_time = p[i].arrival;
-        p[i].waiting = current_time - p[i].arrival;
+        if(cur < p[i].arrival) cur = p[i].arrival;
+        p[i].waiting = cur - p[i].arrival;
         p[i].turnaround = p[i].waiting + p[i].burst;
-        total_wt += p[i].waiting;
-        total_tat += p[i].turnaround;
-        current_time += p[i].burst;
+        tw += p[i].waiting;
+        tt += p[i].turnaround;
+        cur += p[i].burst;
     }
 
-    // Sort back to original input order for printing
     for(int i = 0; i < n - 1; i++) {
         for(int j = 0; j < n - i - 1; j++) {
             if(p[j].original_index > p[j+1].original_index) {
@@ -58,8 +59,7 @@ int main() {
     for(int i = 0; i < n; i++) printf("%s %d\n", p[i].pid, p[i].waiting);
     printf("Turnaround Time:\n");
     for(int i = 0; i < n; i++) printf("%s %d\n", p[i].pid, p[i].turnaround);
-    printf("Average Waiting Time: %.2f\n", total_wt / (float)n);
-    printf("Average Turnaround Time: %.2f\n", total_tat / (float)n);
-
+    printf("Average Waiting Time: %.2f\n", tw / (float)n);
+    printf("Average Turnaround Time: %.2f\n", tt / (float)n);
     return 0;
 }
