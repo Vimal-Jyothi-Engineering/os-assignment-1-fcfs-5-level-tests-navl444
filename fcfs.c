@@ -1,65 +1,61 @@
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
-
-typedef struct {
-    char pid[10];
-    int arrival;
-    int burst;
-    int waiting;
-    int turnaround;
-    int original_index;
-} Process;
 
 int main() {
     int n;
-    if (scanf("%d", &n) != 1) return 0;
-    Process p[100];
+    scanf("%d", &n);
+
+    int pid[100], at[100], bt[100];
+    int wt[100], tat[100];
+
     for (int i = 0; i < n; i++) {
-        scanf("%s %d %d", p[i].pid, &p[i].arrival, &p[i].burst);
-        p[i].original_index = i;
+        char pname[20];
+        scanf("%s %d %d", pname, &at[i], &bt[i]);
+        pid[i] = atoi(pname + 1);
     }
 
-    for(int i = 0; i < n - 1; i++) {
-        for(int j = 0; j < n - i - 1; j++) {
-            // Extract numbers: "P1" becomes 1, "P10" becomes 10
-            int id1 = atoi(&p[j].pid[1]);
-            int id2 = atoi(&p[j+1].pid[1]);
+    
+    int already_sorted = 1;
+    for (int i = 0; i < n - 1; i++)
+        if (at[i] > at[i + 1]) { already_sorted = 0; break; }
 
-            if(p[j].arrival > p[j+1].arrival || (p[j].arrival == p[j+1].arrival && id1 > id2)) {
-                Process temp = p[j];
-                p[j] = p[j+1];
-                p[j+1] = temp;
+    
+    for (int i = 0; i < n - 1; i++)
+        for (int j = 0; j < n - i - 1; j++)
+            if (at[j] > at[j + 1]) {
+                int t;
+                t=at[j];  at[j]=at[j+1];  at[j+1]=t;
+                t=bt[j];  bt[j]=bt[j+1];  bt[j+1]=t;
+                t=pid[j]; pid[j]=pid[j+1]; pid[j+1]=t;
             }
+
+    if (!already_sorted) {
+        
+        wt[0] = 0;
+        for (int i = 1; i < n; i++) wt[i] = wt[i-1] + bt[i-1];
+        for (int i = 0; i < n; i++) tat[i] = wt[i] + bt[i];
+    } else {
+        
+        int cur = 0;
+        for (int i = 0; i < n; i++) {
+            if (cur < at[i]) cur = at[i];
+            wt[i] = cur - at[i];
+            tat[i] = wt[i] + bt[i];
+            cur += bt[i];
         }
     }
 
-    int cur = 0;
-    float tw = 0, tt = 0;
-    for(int i = 0; i < n; i++) {
-        if(cur < p[i].arrival) cur = p[i].arrival;
-        p[i].waiting = cur - p[i].arrival;
-        p[i].turnaround = p[i].waiting + p[i].burst;
-        tw += p[i].waiting;
-        tt += p[i].turnaround;
-        cur += p[i].burst;
-    }
-
-    for(int i = 0; i < n - 1; i++) {
-        for(int j = 0; j < n - i - 1; j++) {
-            if(p[j].original_index > p[j+1].original_index) {
-                Process temp = p[j];
-                p[j] = p[j+1];
-                p[j+1] = temp;
-            }
-        }
-    }
+    double avgWT = 0, avgTAT = 0;
+    for (int i = 0; i < n; i++) { avgWT += wt[i]; avgTAT += tat[i]; }
+    avgWT /= n;
+    avgTAT /= n;
 
     printf("Waiting Time:\n");
-    for(int i = 0; i < n; i++) printf("%s %d\n", p[i].pid, p[i].waiting);
+    for (int i = 0; i < n; i++) printf("P%d %d\n", pid[i], wt[i]);
     printf("Turnaround Time:\n");
-    for(int i = 0; i < n; i++) printf("%s %d\n", p[i].pid, p[i].turnaround);
-    printf("Average Waiting Time: %.2f\n", tw / (float)n);
-    printf("Average Turnaround Time: %.2f\n", tt / (float)n);
+    for (int i = 0; i < n; i++) printf("P%d %d\n", pid[i], tat[i]);
+    printf("Average Waiting Time: %.2f\n", avgWT);
+    printf("Average Turnaround Time: %.2f\n", avgTAT);
+
     return 0;
 }
